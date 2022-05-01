@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -21,18 +22,15 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Integer age;
+
     @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "last_name")
     private String lastName;
 
-    @Transient
-    private String passwordConfirm;
-
-    private String email;
-
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -44,11 +42,10 @@ public class User implements UserDetails {
         this.roles.add(role);
     }
 
-//    @ManyToMany
-//    @JoinTable(name = "users_roles",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    private Collection<Role> roles;
+    public String getRolesText() {
+        Set<String> set = roles.stream().map(role -> role.getName().substring(5)).collect(Collectors.toSet());
+        return String.join(" ", set);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

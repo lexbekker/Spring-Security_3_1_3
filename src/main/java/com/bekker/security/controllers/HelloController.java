@@ -2,6 +2,7 @@ package com.bekker.security.controllers;
 
 import com.bekker.security.entities.User;
 import com.bekker.security.repositories.UserRepository;
+import com.bekker.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,7 @@ import java.util.List;
 public class HelloController {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	@GetMapping(value = "/")
 	public String printWelcome(ModelMap model) {
@@ -30,7 +31,7 @@ public class HelloController {
 
 	@GetMapping("/user")
 	public String userPage(Principal principal, Model model) {
-		User user = userRepository.findByUsername(principal.getName());
+		User user = userService.findByUsername(principal.getName());
 		model.addAttribute("user", user);
 		return "user";
 	}

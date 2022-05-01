@@ -13,17 +13,23 @@
     <label for="lastName">Enter Last Name:</label>
     <input type="text" th:field="*{lastName}" id="lastName" />
     <br/>
+    <label for="age">Enter age:</label>
+    <input type="text" th:field="*{age}" id="age" />
+    <br/>
     <label for="username">Enter username:</label>
     <input type="text" th:field="*{username}" id="username" />
     <br/>
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password" />
     <br/>
-    <label for="passwordConfirm">Confirm your password:</label>
-    <input type="text" th:field="*{passwordConfirm}" id="passwordConfirm" />
-    <br/>
-    <label for="email">Enter email:</label>
-    <input type="text" th:field="*{email}" id="email" />
+    <label for="roles">Roles:</label>
+    <select id="roles" th:field="*{roles}" size="2" multiple>
+        <option th:each="role : ${allRoles}"
+                th:value="${{role}}"
+                th:text="${role.getName()}">
+            Role
+        </option>
+    </select>
     <br/>
     <input type="submit" value="Create!" />
 </form>
