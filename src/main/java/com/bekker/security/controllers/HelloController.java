@@ -32,8 +32,14 @@ public class HelloController {
 	@GetMapping("/user")
 	public String userPage(Principal principal, Model model) {
 		User user = userService.findByUsername(principal.getName());
+		model.addAttribute("log", userService.findByUsername(principal.getName()));
 		model.addAttribute("user", user);
 		return "user";
+	}
+
+	@GetMapping("/login")
+	public String loginPage() {
+		return "login";
 	}
 	
 }

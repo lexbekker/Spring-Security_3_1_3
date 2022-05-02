@@ -31,11 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("No user with this id : " + id);
-        }
-        return user.get();
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user id: " + id));
     }
 
     @Override
@@ -46,20 +43,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("No user with this id, cant delete");
-        }
-        userRepository.delete(user.get());
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        userRepository.delete(user);
     }
 
     @Override
     public void update(Long id, User user) {
-        Optional<User> result = userRepository.findById(id);
-        if (result.isEmpty()) {
-            throw new IllegalArgumentException("No user with this id");
-        }
-        User editedUser = result.get();
+        User editedUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         if (!user.getPassword().equals("")) {
             editedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }

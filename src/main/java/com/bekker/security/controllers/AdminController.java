@@ -1,17 +1,14 @@
 package com.bekker.security.controllers;
 
 import com.bekker.security.entities.User;
-import com.bekker.security.repositories.RoleRepository;
-import com.bekker.security.repositories.UserRepository;
 import com.bekker.security.services.RoleService;
 import com.bekker.security.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/admin")
@@ -19,12 +16,7 @@ public class AdminController {
 
     private RoleService roleService;
     private UserService userService;
-    private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -35,9 +27,11 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String index(Model model) {
+    public String index(Principal principal, Model model) {
+        model.addAttribute("log", userService.findByUsername(principal.getName()));
         model.addAttribute("users", userService.findAll());
         model.addAttribute("allRoles", roleService.findAll());
+        model.addAttribute("user", new User());
         return "/admin/index";
     }
 
@@ -47,35 +41,35 @@ public class AdminController {
         return "/admin/show";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/adduser")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleService.findAll());
-        return "/admin/new";
+        return "admin/add-user";
     }
 
-    @PostMapping()
+    @PostMapping("/adduser")
     public String create(@ModelAttribute("user") User user ) {
         userService.save(user);
 
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/update/{id}")
     public String edit(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.findById(id));
         model.addAttribute("allRoles", roleService.findAll());
-        return "/admin/edit";
+        return "/admin/update-user";
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/update/{id}")
     public String update(@PathVariable Long id,
                          @ModelAttribute("user") User user) {
         userService.update(id, user);
         return "redirect:/admin";
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         userService.delete(id);
         return "redirect:/admin";
